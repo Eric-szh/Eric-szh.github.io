@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Two silent failures from deploying RAGFlow on an NVIDIA DGX Spark: zeroed embeddings from a dropped max_tokens, and a table parser that switched on Text2SQL during a live demo.">
+  <title>Two silent failures on a DGX Spark · Zenghui Sun</title>
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="../index.html">Zenghui Sun</a>
+  <nav class="nav">
+    <a href="../index.html#experience">Experience</a>
+    <a href="../index.html#research">Research</a>
+    <a href="../index.html#projects">Projects</a>
+    <a href="../index.html#writing">Writing</a>
+    <a href="../index.html#contact">Contact</a>
+  </nav>
+</header>
+
+<main class="article">
+  <p class="eyebrow">Writing · September 2026</p>
+  <h1>Two silent failures on a DGX Spark</h1>
+  <p class="meta">Notes from deploying RAGFlow on-prem for an enterprise knowledge base</p>
+
+  <p class="lede">I am the sole engineer on an enterprise retrieval system for an industrial valve manufacturer. The engine is RAGFlow, running on the company's own NVIDIA DGX Spark. Getting it to serve was the easy part. The two bugs that cost the most time never raised an error, and each one left me with a rule I now apply to every deployment.</p>
+
+  <h2>The setup</h2>
+  <p>The DGX Spark is a GB10 machine: arm64, 128 GB of unified memory. RAGFlow shipped x86-only at the time, so the first job was building an arm64 image myself. Alongside it run Elasticsearch, MySQL, MinIO and Valkey. Once up, the numbers were good: about 92 tokens per second on a 30B mixture-of-experts model at full GPU, first token in under 0.2 seconds warm, BGE-M3 embeddings in 143 to 194 ms per item, retrieval alone in 0.4 seconds. The bandwidth-bound sweet spot on this hardware is a 30 to 70B MoE; a 32B dense model managed around 10 tokens per second.</p>
+
+  <h2>Failure 1: every embedding was zero, and nothing said so</h2>
+  <p>After re-registering the embedding model, I dropped its <code>max_tokens</code> setting. The ingestion run went through the whole corpus without a single error. Every chunk was written. Every embedding was a zero vector.</p>
+  <p>The first sign was an Elasticsearch mapping error at retrieval time, after the corpus was fully ingested, from a component two steps downstream of the actual fault. Nothing in the embedding step had checked that its own output was non-degenerate.</p>
+  <p><strong>Rule:</strong> an ingestion pipeline has to assert on what it produces, not only on whether each step returned. A norm check on a sample of embeddings after every run takes seconds and would have caught this before the first write.</p>
+
+  <h2>Failure 2: a table parser turned on a feature I never asked for</h2>
+  <p>Valve datasheets are table-dense, so I reparsed the corpus with RAGFlow's table parser. Chunk count went from 516 to 981 and average chunk similarity on my test questions improved from 0.419 to 0.554. A clear win.</p>
+  <p>What I did not see was that the table parser silently writes a <code>field_map</code> on the knowledge base, and a populated <code>field_map</code> is the switch for RAGFlow's built-in Text2SQL path. During a live demo a question hit that path, the generated SQL failed, and the retry loop burned about 30,000 tokens over roughly 17 minutes before it cleared. Whole-question latency, which had been 1.7 to 8.1 seconds, was 3.1 to 15.9 seconds until I found and disabled it.</p>
+  <p><strong>Rule:</strong> diff the configuration object after every parser or model change, not just the output metrics. The metrics said the change was good. The config said a new code path was live.</p>
+
+  <h2>The diagnosis that mattered more than either bug</h2>
+  <p>With both fixed, answer accuracy on ad-hoc five-question parameter sets was still only 3 of 5, then 2 of 5. It would have been easy to reach for more retrieval tuning. Two independent rounds of testing showed the fault was not retrieval, not chunking and not prompting: the right chunk was ranked first in 5 of 5 cases, and in the top 12 at ranks 1, 1, 2 and 9. The model was misreading rows within a retrieved table and could not compare across rows. One of the five questions was also ambiguous in the source document itself.</p>
+  <p>That diagnosis is why exact parameter lookups are routed to a structured SQL store in the architecture rather than through the vector index at all. It is also why I stopped quoting those accuracy numbers as "system accuracy": five ad-hoc questions are a smoke test, and the golden set that would justify a real number is still being built.</p>
+
+  <h2>Three habits I keep now</h2>
+  <ul>
+    <li>Assert on outputs, not return codes. Silence is not success.</li>
+    <li>After any change, diff the config, not just the metric.</li>
+    <li>Say what a number was measured on. A result without its denominator is a claim, not a measurement.</li>
+  </ul>
+
+  <p class="back"><a href="../index.html#writing">← Back to writing</a></p>
+</main>
+
+<footer class="footer"><p>© 2026 Zenghui Sun</p></footer>
+</body>
+</html>

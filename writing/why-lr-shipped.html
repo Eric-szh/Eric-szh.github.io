@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Why a bagged logistic regression, not our best transformer, is the model running in a children's hospital.">
+  <title>Why the weaker model shipped · Zenghui Sun</title>
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="../index.html">Zenghui Sun</a>
+  <nav class="nav">
+    <a href="../index.html#experience">Experience</a>
+    <a href="../index.html#research">Research</a>
+    <a href="../index.html#projects">Projects</a>
+    <a href="../index.html#writing">Writing</a>
+    <a href="../index.html#contact">Contact</a>
+  </nav>
+</header>
+
+<main class="article">
+  <p class="eyebrow">Writing · September 2026</p>
+  <h1>Why the weaker model shipped</h1>
+  <p class="meta">On choosing a bagged logistic regression over a transformer for a pediatric ICU early-warning system</p>
+
+  <p class="lede">The best model we built for predicting pediatric ICU transfers is a transformer. The model running in the hospital is a logistic regression. That was the right call, and the reasons are worth writing down because they are the reasons most "best model" numbers never make it to production.</p>
+
+  <h2>The numbers</h2>
+  <p>On the CHOA cohort, the clinical standard PEWS score reaches an AUROC of 0.819. Our bagged logistic regression reaches 0.911, with recall 0.742 at an event rate of 0.617% on a 3.5M-row test set. The MIST transformer, the model from our NeurIPS submission, beats it on both AUROC and AUPRC. If the job were a leaderboard, MIST wins.</p>
+
+  <h2>What a clinician actually asks</h2>
+  <p>When we presented the models to CHOA clinical staff, the questions were not about AUPRC. They were about why. Why did this patient get flagged, and what changed in the last two hours. A logistic regression on engineered features answers that directly: the coefficient on a vital sign's deviation from the patient's own admission baseline is a number a physician can read and argue with. We iterated the 2-hour and 12-hour prediction windows and the alert thresholds on that kind of argument. A transformer over irregular token streams has no equivalent conversation. Attention weights are not an explanation a nurse can act on at 3 a.m.</p>
+  <p>The feature-importance and time-window analyses were the deliverable clinicians engaged with most, and that is only possible because the deployed model is one whose features mean something.</p>
+
+  <h2>What deployment actually costs</h2>
+  <p>The model runs inside Epic through the EHR API, in a cross-institutional team of around 19 people spread across the hospital and the university. The interface is a payload specification I wrote: which features, in what shape, computed from which flowsheet rows. For a logistic regression that payload is a flat vector of deltas. For MIST it is a variable-length, irregularly timed, multimodal token stream, which means the preprocessing that produces it has to be reproduced exactly inside the hospital's integration layer, monitored, and kept in sync with the research code. Every one of those is a place to fail silently.</p>
+  <p>Bagging was the compromise that made me comfortable: it stabilises the single-model predictions without changing what the features mean.</p>
+
+  <h2>Where the transformer still matters</h2>
+  <p>None of this makes the transformer work wasted. It is the research contribution, it sets the ceiling the deployed model is measured against, and it tells us how much signal the simpler model is leaving on the table. The honest framing is: the deployed model is not the best model, it is the best model we could explain and operate. Those are different questions, and conflating them is how a lot of clinical ML ends up as a paper with no patients behind it.</p>
+
+  <h2>What I took from it</h2>
+  <ul>
+    <li>Report the deployed model and the best model as two separate facts. Never phrase it so the shipped one sounds like the winner.</li>
+    <li>Interpretability is not a nice-to-have when the user is a physician. It is the feature that gets you the feedback loop that improves everything else.</li>
+    <li>Count integration complexity as a model cost. A model whose preprocessing cannot be reproduced by someone else's team is not deployable, whatever its AUROC.</li>
+  </ul>
+
+  <p class="back"><a href="../index.html#writing">← Back to writing</a></p>
+</main>
+
+<footer class="footer"><p>© 2026 Zenghui Sun</p></footer>
+</body>
+</html>

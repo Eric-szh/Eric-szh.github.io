@@ -199,3 +199,25 @@ dd { margin: 2px 0 0; }
   .nav { gap: 12px; }
   .nav a { font-size: 14px; }
 }
+
+/* Writing list */
+.posts { list-style: none; padding: 0; margin: 0; }
+.posts li { padding: 14px 0; border-bottom: 1px solid var(--rule); }
+.posts li:last-child { border-bottom: 0; }
+.posts a { font-weight: 700; font-size: 18px; }
+.posts p { margin: 4px 0 0; color: var(--muted); font-size: 15.5px; }
+.card h3 a { color: var(--text); }
+.card h3 a:hover { color: var(--accent); text-decoration: none; }
+
+/* Article pages */
+.article { max-width: 720px; padding-top: 48px; }
+.article h1 { font-size: clamp(28px, 4vw, 38px); margin-bottom: 8px; }
+.article h2 { font-size: 20px; margin-top: 36px; border-bottom: 1px solid var(--rule); }
+.article .lede { font-size: 19px; color: var(--text); margin: 20px 0 8px; }
+.article p, .article li { font-size: 17px; }
+.article li { margin-bottom: 8px; }
+.article table { border-collapse: collapse; width: 100%; margin: 12px 0 20px; font-size: 15.5px; }
+.article th, .article td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+.article th { color: var(--muted); font-weight: 600; font-size: 14px; text-transform: uppercase; letter-spacing: 0.04em; }
+.article code { font-family: ui-monospace, Consolas, "SF Mono", Menlo, monospace; font-size: 0.9em; background: var(--accent-soft); padding: 1px 5px; border-radius: 4px; }
+.article .back { margin-top: 40px; }

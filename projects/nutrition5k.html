@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="RGB plus depth fusion for calorie estimation on Nutrition5k: a lightweight depth CNN beats a full ResNet18 depth branch, and Food-101 pre-training hurts.">
+  <title>RGB–LiDAR Food Estimation · Zenghui Sun</title>
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="../index.html">Zenghui Sun</a>
+  <nav class="nav">
+    <a href="../index.html#experience">Experience</a>
+    <a href="../index.html#research">Research</a>
+    <a href="../index.html#projects">Projects</a>
+    <a href="../index.html#writing">Writing</a>
+    <a href="../index.html#contact">Contact</a>
+  </nav>
+</header>
+
+<main class="article">
+  <p class="eyebrow">Course project · CS 7643 Deep Learning, Georgia Tech · Spring 2026</p>
+  <h1>RGB–LiDAR fusion for food macro-nutrient estimation</h1>
+  <p class="meta">With Timotheus James, Julien Perez and Jinseok Heo · Dataset: Nutrition5k</p>
+
+  <p class="lede">Can a depth map make a calorie estimate better? Yes, by 17.6% MAE, but only if the depth encoder is small and trained from scratch. The two things we expected to help most, a big pretrained depth branch and food-classification pre-training, both made it worse.</p>
+
+  <h2>Setup</h2>
+  <p>Nutrition5k pairs overhead dish photos with structured-light depth maps and dietitian-measured macros. Our working set was 3,242 dishes with valid RGB and depth pairs, predicting calories (extended to fat, carbs and protein). Food-101 (about 101k images) was used for a pre-training ablation.</p>
+  <p>My part: I built the RGB+Depth V1 and V1-Improved models, which ended up the best architecture overall; designed and ran the Food-101 pre-training pipeline; ran the hypothesis experiments and architecture ablations; and led the error analysis and per-calorie-range breakdown.</p>
+
+  <h2>Architecture (V1-Improved)</h2>
+  <ul>
+    <li><strong>RGB stream:</strong> pretrained ResNet18, 512-dim embedding.</li>
+    <li><strong>Depth stream:</strong> a 4-layer CNN trained from scratch (1 → 32 → 64 → 128 channels, adaptive average pool to 64 dims). Deliberately small: a single-channel overhead depth map has nothing in common with ImageNet.</li>
+    <li><strong>Fusion:</strong> concatenate to 576 dims, then a 576 → 256 → 1 regression head.</li>
+    <li><strong>Training:</strong> SmoothL1 loss (β = 0.5), AdamW, differential learning rates (backbone 1e-5, head 1e-3), gradient clipping, cosine annealing, depth augmentation (Gaussian noise plus random block dropout), and a log1p target transform with z-score normalisation.</li>
+  </ul>
+
+  <h2>Results (Nutrition5k test set, n ≈ 325)</h2>
+  <table>
+    <thead><tr><th>Model</th><th>MAE (kcal)</th><th>RMSE</th><th>Acc@20%</th></tr></thead>
+    <tbody>
+      <tr><td>RGB-only baseline</td><td>57.70</td><td>98.25</td><td>0.529</td></tr>
+      <tr><td>RGB+Depth V1</td><td>52.12</td><td>91.24</td><td>0.542</td></tr>
+      <tr><td><strong>V1-Improved</strong></td><td><strong>47.52</strong></td><td><strong>78.47</strong></td><td><strong>0.582</strong></td></tr>
+      <tr><td>V1 + Food-101 init</td><td>50.45</td><td>81.94</td><td>0.535</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Three hypotheses, two surprises</h2>
+  <ol>
+    <li><strong>Depth helps, but only lightweight depth.</strong> Swapping the 4-layer CNN for a full ResNet18 depth branch made MAE worse by 8.15 kcal. Pretrained ImageNet filters are the wrong prior for a depth map, and there is not enough data to overwrite them.</li>
+    <li><strong>Food-101 pre-training hurts.</strong> Initialising from a food classifier raised MAE by 6.2%. Category-discriminative features are trained to ignore exactly what portion regression needs: how much of the dish there is, not which dish it is.</li>
+    <li><strong>The log transform matters more than the architecture.</strong> Moving from raw MSE to a log1p target cut MAPE by 15.5 percentage points (46.97% → 31.44%). Raw MSE lets the high-calorie tail dominate and the model over-predicts every light dish.</li>
+  </ol>
+
+  <p class="back"><a href="../index.html#projects">← Back to projects</a></p>
+</main>
+
+<footer class="footer"><p>© 2026 Zenghui Sun</p></footer>
+</body>
+</html>

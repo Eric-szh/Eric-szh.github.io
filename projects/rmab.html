@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ICU bed allocation as a restless multi-armed bandit on eICU data: Q-function heuristic policy, 39 fewer simulated deaths than sickest-first, and a fairness analysis.">
+  <title>ICU Allocation via RMAB · Zenghui Sun</title>
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="../index.html">Zenghui Sun</a>
+  <nav class="nav">
+    <a href="../index.html#experience">Experience</a>
+    <a href="../index.html#research">Research</a>
+    <a href="../index.html#projects">Projects</a>
+    <a href="../index.html#writing">Writing</a>
+    <a href="../index.html#contact">Contact</a>
+  </nav>
+</header>
+
+<main class="article">
+  <p class="eyebrow">Course project · Georgia Tech · 2025</p>
+  <h1>ICU patient allocation via restless multi-armed bandits</h1>
+  <p class="meta">With Wei-Yu Chen and Yue-Tsz Fan · Code: <a href="https://github.com/Eric-szh/RMAB-MIMIC" target="_blank" rel="noopener">github.com/Eric-szh/RMAB-MIMIC</a></p>
+
+  <p class="lede">When ICU beds are scarce, who gets one? We modelled the question as a restless bandit, learned patient dynamics from the eICU database, and found that a look-ahead policy saves far more simulated lives than "sickest first". Then we added ethnicity to the state and watched the policy reproduce the disparities in the data.</p>
+
+  <h2>Formulation</h2>
+  <ul>
+    <li><strong>Data.</strong> eICU Collaborative Research Database demo v2.0.1: 17,885 patient-day transitions over 20,377 patient-days across multiple US ICUs.</li>
+    <li><strong>State.</strong> Four clinical variables (MAP, SpO₂, GCS, lactate), each discretised into three bins, giving 81 live states plus one absorbing death state: an 82-state MDP.</li>
+    <li><strong>Dynamics.</strong> Separate ICU and non-ICU transition matrices estimated from the data. Each patient is an arm whose state evolves whether or not it is "pulled" (admitted to ICU), which is what makes the bandit restless.</li>
+    <li><strong>Policy.</strong> Indexability was not established, so instead of a Whittle index we used a Q-function heuristic: value iteration at γ = 0.97 gives Q<sub>ICU</sub>(s) and Q<sub>non-ICU</sub>(s), and the marginal benefit I(s) = Q<sub>ICU</sub>(s) − Q<sub>non-ICU</sub>(s) ranks patients. The top K = 20 each day get a bed.</li>
+  </ul>
+
+  <h2>Results</h2>
+  <p>Simulation over a 90-day horizon, N = 300 patients, K = 20 beds, 20 random seeds.</p>
+  <table>
+    <thead><tr><th>Policy</th><th>Cumulative reward</th><th>Deaths at day 90</th></tr></thead>
+    <tbody>
+      <tr><td>RMAB heuristic</td><td>14,145 ± 739</td><td><strong>85.0 ± 8.3</strong></td></tr>
+      <tr><td>Sickest-first</td><td>10,426 ± 813</td><td>124.2 ± 8.2</td></tr>
+      <tr><td>Random</td><td>10,491 ± 730</td><td>122.3 ± 8.7</td></tr>
+    </tbody>
+  </table>
+  <p>The RMAB policy earns 36% more cumulative reward than sickest-first and ends with about 39 fewer deaths. The surprise is that sickest-first is no better than random: the sickest patients often have the smallest marginal benefit from a bed, so a one-step greedy rule wastes capacity. Multi-step look-ahead is what does the work.</p>
+
+  <h2>Fairness analysis</h2>
+  <p>A second model adds patient ethnicity (African American, Hispanic/Other, Caucasian) to the state, giving 244 states. The clinical variables are identical, so any difference in the learned policy comes from ethnicity alone.</p>
+  <ul>
+    <li>At the same clinical state, the priority index differs by up to 61.79 points across groups.</li>
+    <li>Starting from one identical clinical state, the ethnicity-aware policy allocates African American patients 69% fewer ICU days than the clinically blind policy, and Hispanic/Other patients 80% more.</li>
+  </ul>
+  <p>The policy is not inventing a bias. It is learning transition dynamics from observational care patterns, and those patterns already differ by group. An optimiser trained on that data faithfully reproduces the disparity and then acts on it. The practical lesson is that "just add more features" is not neutral in an allocation setting, and that a fairness audit belongs in the model-selection step, not after deployment.</p>
+
+  <p class="back"><a href="../index.html#projects">← Back to projects</a></p>
+</main>
+
+<footer class="footer"><p>© 2026 Zenghui Sun</p></footer>
+</body>
+</html>

@@ -17,6 +17,7 @@
     <a href="#experience">Experience</a>
     <a href="#research">Research</a>
     <a href="#projects">Projects</a>
+    <a href="#writing">Writing</a>
     <a href="#skills">Skills</a>
     <a href="#contact">Contact</a>
   </nav>
@@ -133,13 +134,19 @@
     <h2>Projects</h2>
     <div class="cards">
       <article class="card">
-        <h3>ICU Patient Allocation via Restless Multi-Armed Bandits</h3>
+        <h3><a href="projects/choa.html">Pediatric ICU Early Warning at CHOA</a></h3>
+        <p class="meta">Georgia Tech × Children's Healthcare of Atlanta · 2025–2026</p>
+        <p>A 9-stage EHR preprocessing pipeline (WDL-tree semantic imputation, LLM severity scoring), a model benchmark against the clinical standard PEWS (AUROC 0.819 to 0.911), and a bagged logistic regression deployed into the hospital's Epic workflow.</p>
+        <p class="tags">clinical ML · EHR · time series · deployment</p>
+      </article>
+      <article class="card">
+        <h3><a href="projects/rmab.html">ICU Patient Allocation via Restless Multi-Armed Bandits</a></h3>
         <p class="meta">eICU · 2025 · <a href="https://github.com/Eric-szh/RMAB-MIMIC" target="_blank" rel="noopener">github.com/Eric-szh/RMAB-MIMIC</a></p>
         <p>Formulated ICU bed allocation as a finite-horizon RMAB over an 82-state MDP, estimated transition matrices from 17,885 eICU patient-day transitions, and derived a Q-function heuristic policy with value iteration. Over a 90-day horizon (N=300, 20 seeds) the policy reduced simulated deaths by about 39 versus a sickest-first baseline. An ethnicity-augmented variant showed how a policy learned from observational data reproduces the disparities already in it.</p>
         <p class="tags">RL · MDP · value iteration · fairness · healthcare</p>
       </article>
       <article class="card">
-        <h3>RGB–LiDAR Fusion for Food Macro-Nutrient Estimation</h3>
+        <h3><a href="projects/nutrition5k.html">RGB–LiDAR Fusion for Food Macro-Nutrient Estimation</a></h3>
         <p class="meta">Nutrition5k · 2026</p>
         <p>Dual-stream PyTorch model: a pretrained ResNet18 for RGB and a purpose-built 4-layer CNN for depth, fused into a regression head. Cut calorie MAE 17.6% (57.70 to 47.52 kcal) over an RGB-only baseline. Ablations showed the lightweight depth encoder beats a full ResNet18 depth branch, and that Food-101 pre-training hurts portion regression.</p>
         <p class="tags">computer vision · multimodal · CNN · PyTorch</p>
@@ -151,6 +158,20 @@
         <p class="tags">agent engineering · LLM tooling · evals · automation</p>
       </article>
     </div>
+  </section>
+
+  <section id="writing" class="section">
+    <h2>Writing</h2>
+    <ul class="posts">
+      <li>
+        <a href="writing/why-lr-shipped.html">Why the weaker model shipped</a>
+        <p>The best model we built for pediatric ICU transfer is a transformer. The one running in the hospital is a logistic regression. Why that was the right call.</p>
+      </li>
+      <li>
+        <a href="writing/ragflow-silent-failures.html">Two silent failures on a DGX Spark</a>
+        <p>Zeroed embeddings from a dropped setting, and a table parser that quietly switched on Text2SQL during a live demo. What each one taught me about deploying RAG on-prem.</p>
+      </li>
+    </ul>
   </section>
 
   <section id="skills" class="section">
