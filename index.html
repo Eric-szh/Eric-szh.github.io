@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Zenghui (Eric) Sun. Machine learning engineer working on clinical AI, LLM systems and retrieval. M.S. Computer Science, Georgia Tech.">
+  <title>Zenghui Sun</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%232B5496'/><text x='50' y='68' font-size='52' font-family='sans-serif' font-weight='700' fill='white' text-anchor='middle'>ZS</text></svg>">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <a class="brand" href="#top">Zenghui Sun</a>
+  <nav class="nav">
+    <a href="#about">About</a>
+    <a href="#experience">Experience</a>
+    <a href="#research">Research</a>
+    <a href="#projects">Projects</a>
+    <a href="#skills">Skills</a>
+    <a href="#contact">Contact</a>
+  </nav>
+</header>
+
+<main id="top">
+
+  <section class="hero">
+    <div class="hero-text">
+      <p class="eyebrow">Machine Learning Engineer · Atlanta, GA</p>
+      <h1>Zenghui Sun <span class="cn">孙增辉</span></h1>
+      <p class="tagline">I go by Eric. I build machine learning systems that end up in front of real users: a pediatric ICU early-warning model running inside a hospital's EHR, a post-trained medical LLM in production, and an enterprise retrieval system I am architecting from zero.</p>
+      <div class="hero-actions">
+        <a class="btn primary" href="assets/Zenghui_Sun_Resume.pdf" target="_blank" rel="noopener">Resume (PDF)</a>
+        <a class="btn" href="https://github.com/Eric-szh" target="_blank" rel="noopener">GitHub</a>
+        <a class="btn" href="https://www.linkedin.com/in/zenghui-sun" target="_blank" rel="noopener">LinkedIn</a>
+      </div>
+    </div>
+    <img class="portrait" src="assets/photo.jpg" alt="Portrait of Zenghui Sun" width="240" height="240">
+  </section>
+
+  <section id="about" class="section">
+    <h2>About</h2>
+    <div class="about-grid">
+      <div>
+        <p>I finished my M.S. in Computer Science at Georgia Tech in May 2026 with a concentration in machine learning and a 4.0 GPA, after a B.S. in Computer Science and Artificial Intelligence at Northeastern (summa cum laude). My work sits at the intersection of three things: clinical AI on messy, irregularly sampled hospital data; LLM post-training and retrieval systems; and reinforcement learning for resource allocation.</p>
+        <p>What I care about most is the gap between a model that scores well and a model that a clinician or an engineer will actually trust. At Children's Healthcare of Atlanta that meant choosing an interpretable logistic-regression ensemble over a stronger transformer for deployment, and iterating alert thresholds on direct physician feedback.</p>
+        <p>Outside work I play and design board games, run a Dungeons and Dragons campaign, play Magic: The Gathering, cook, and ski.</p>
+      </div>
+      <dl class="facts">
+        <div><dt>Education</dt><dd>M.S. CS (ML), Georgia Tech, 2026<br>B.S. CS &amp; AI, Northeastern, 2023</dd></div>
+        <div><dt>Focus</dt><dd>Clinical ML, LLM systems &amp; RAG, reinforcement learning</dd></div>
+        <div><dt>Location</dt><dd>Decatur, GA (Atlanta metro), open to relocation</dd></div>
+        <div><dt>Languages</dt><dd>English, Mandarin Chinese</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <section id="experience" class="section">
+    <h2>Experience</h2>
+
+    <article class="entry">
+      <div class="entry-head">
+        <h3>Pango Valve System <span class="role">AI-LLM Application Engineer</span></h3>
+        <p class="meta">Remote (Atlanta, GA) · Jul 2026 – Present</p>
+      </div>
+      <ul>
+        <li>Technical owner of a production enterprise retrieval system, architected from 0 to 1: a three-store backend (vector and full-text search index, structured SQL parameter database, object store) and a dual-path request router (rules-first regex plus LLM classifier) that sends exact-parameter lookups to SQL and open questions to hybrid vector + BM25 retrieval with reranking and mandatory citations.</li>
+        <li>Designed the routing and quoting layer as a Python FastAPI service with a swappable retrieval engine, specified a multimodal ingestion pipeline (OCR and table-structure parsing, Whisper ASR for video, CAD title-block and BOM extraction), and benchmarked on-prem serving on an NVIDIA DGX Spark (GB10, ARM, 128 GB) against hosted APIs.</li>
+        <li>Deployed RAGFlow on the DGX Spark from an arm64 image I built myself after the vendor shipped x86 only, then measured it end to end: roughly 92 tokens/s generation on a 30B mixture-of-experts model, first token under 0.2 s warm, retrieval alone 0.4 s.</li>
+      </ul>
+    </article>
+
+    <article class="entry">
+      <div class="entry-head">
+        <h3>Georgia Institute of Technology <span class="role">Research Assistant</span></h3>
+        <p class="meta">Atlanta, GA · Jun 2025 – Present</p>
+      </div>
+      <p class="sub">Advisors: Dr. Kai Wang and Dr. Gian-Gabriel Garcia · Collaborator: Children's Healthcare of Atlanta (CHOA)</p>
+      <ul>
+        <li>Built a 9-stage preprocessing pipeline in Python for irregularly sampled PICU EHR flowsheets: WDL-tree-aware semantic imputation, LLM chain-of-thought severity scoring (0–1 continuous) replacing ordinal encoding, and four temporal delta features.</li>
+        <li>Built and benchmarked a suite of models for pediatric ICU-transfer prediction (reconstruction-augmented LSTM, MIST transformer, neural network, decision tree, isolation forest, and logistic regression with a bagged ensemble) against the clinical standard PEWS, raising AUROC from 0.819 to 0.911.</li>
+        <li>Deployed the bagged logistic-regression model into CHOA's production clinical workflow via the Epic EHR API, chosen over the higher-performing transformer for interpretability and lower deployment complexity (AUROC 0.911, recall 0.742 at a 0.617% event rate, 3.5M-row test set).</li>
+        <li>Defined the model API contract and payload specification for Epic FHIR integration within a cross-institutional team of about 19 people, and presented feature-importance and time-window analyses to clinical staff, iterating 2-hour and 12-hour prediction windows on physician feedback.</li>
+      </ul>
+    </article>
+
+    <article class="entry">
+      <div class="entry-head">
+        <h3>Winning Health <span class="role">Algorithm Engineer Intern</span></h3>
+        <p class="meta">Shanghai, China · Jul 2024 – Aug 2024</p>
+      </div>
+      <ul>
+        <li>Built an end-to-end post-training pipeline for a Llama 3 8B medical LLM: schema-constrained instruction templates for clinical entity extraction, 2,000+ QA and preference pairs generated by an LLM ensemble, and a reward model scoring factuality, completeness and JSON adherence.</li>
+        <li>Improved a domain-specific extraction benchmark by 31.7% over existing baselines; the model was integrated into the WiNGPT production corpus for clinical information extraction.</li>
+      </ul>
+    </article>
+
+    <article class="entry">
+      <div class="entry-head">
+        <h3>Northeastern University <span class="role">Teaching Assistant, CS 2510</span></h3>
+        <p class="meta">Boston, MA</p>
+      </div>
+      <ul>
+        <li>Fundamentals of Computer Science 2: object-oriented programming and data structures in Java.</li>
+      </ul>
+    </article>
+  </section>
+
+  <section id="research" class="section">
+    <h2>Research</h2>
+    <ol class="pubs">
+      <li>
+        <span class="pub-title">Multimodal Irregular Time-series Analysis on Clinical Databases</span><br>
+        Shangqing Xu, <strong>Zenghui Sun</strong>, Soumil Sahu, Kai Wang, B. Aditya Prakash.<br>
+        <span class="meta">Manuscript under review, NeurIPS 2026.</span>
+        <p>MIST, a transformer for heterogeneous, irregularly sampled clinical modalities under a unified token-stream representation. Across four tasks on real clinical databases: +8% AUROC on ICU escalation, +8% AUROC on phenotyping, 19% lower MSE on length of stay, 13% lower MSE on short-horizon vital forecasting.</p>
+      </li>
+      <li>
+        <span class="pub-title">Networked Restless Multi-Arm Bandits with Reinforcement Learning</span><br>
+        Hanmo Zhang, <strong>Zenghui Sun</strong>, Kai Wang.<br>
+        <span class="meta"><a href="https://arxiv.org/abs/2512.06274" target="_blank" rel="noopener">arXiv:2512.06274</a> [cs.LG], 2025.</span>
+        <p>RL-based policy optimization for restless bandits whose arms are connected on a graph, outperforming classical Whittle-index methods in networked settings.</p>
+      </li>
+      <li>
+        <span class="pub-title">Early Prediction of Pediatric ICU Transfer: A Comparative Study of Tabular and Time Series Machine Learning Models</span><br>
+        <span class="meta">Manuscript in preparation, to be submitted to the INFORMS Journal on Data Science.</span>
+        <p>Compares tabular models (PEWS, logistic regression, decision tree, neural network) with time-series models (DLinear, Bi-LSTM, MIST) on a CHOA PICU cohort. I own the logistic-regression and tabular baseline pipeline.</p>
+      </li>
+    </ol>
+  </section>
+
+  <section id="projects" class="section">
+    <h2>Projects</h2>
+    <div class="cards">
+      <article class="card">
+        <h3>ICU Patient Allocation via Restless Multi-Armed Bandits</h3>
+        <p class="meta">eICU · 2025 · <a href="https://github.com/Eric-szh/RMAB-MIMIC" target="_blank" rel="noopener">github.com/Eric-szh/RMAB-MIMIC</a></p>
+        <p>Formulated ICU bed allocation as a finite-horizon RMAB over an 82-state MDP, estimated transition matrices from 17,885 eICU patient-day transitions, and derived a Q-function heuristic policy with value iteration. Over a 90-day horizon (N=300, 20 seeds) the policy reduced simulated deaths by about 39 versus a sickest-first baseline. An ethnicity-augmented variant showed how a policy learned from observational data reproduces the disparities already in it.</p>
+        <p class="tags">RL · MDP · value iteration · fairness · healthcare</p>
+      </article>
+      <article class="card">
+        <h3>RGB–LiDAR Fusion for Food Macro-Nutrient Estimation</h3>
+        <p class="meta">Nutrition5k · 2026</p>
+        <p>Dual-stream PyTorch model: a pretrained ResNet18 for RGB and a purpose-built 4-layer CNN for depth, fused into a regression head. Cut calorie MAE 17.6% (57.70 to 47.52 kcal) over an RGB-only baseline. Ablations showed the lightweight depth encoder beats a full ResNet18 depth branch, and that Food-101 pre-training hurts portion regression.</p>
+        <p class="tags">computer vision · multimodal · CNN · PyTorch</p>
+      </article>
+      <article class="card">
+        <h3>Agentic Workflow Harness</h3>
+        <p class="meta">Self-built · 2026</p>
+        <p>A layered harness that makes an LLM agent execute a repeatable workflow: a policy layer for hard constraints, persistent memory separated from procedure, a single content source of truth, trigger-invoked skills, and a correction loop that routes every caught error back to the layer that should have prevented it. Irreversible actions sit behind human confirmation and programmatic verification gates.</p>
+        <p class="tags">agent engineering · LLM tooling · evals · automation</p>
+      </article>
+    </div>
+  </section>
+
+  <section id="skills" class="section">
+    <h2>Skills</h2>
+    <dl class="skills">
+      <div><dt>Languages</dt><dd>Python, Java, JavaScript / Node.js, SQL</dd></div>
+      <div><dt>ML / AI</dt><dd>PyTorch, scikit-learn, LLM fine-tuning, reward modeling, RLHF, LSTM, CNN, RAG, hybrid retrieval (vector + BM25), reranking, embeddings</dd></div>
+      <div><dt>Software</dt><dd>Data structures and algorithms, object-oriented design, distributed systems, REST APIs, FastAPI, Express, Git, Jupyter</dd></div>
+      <div><dt>Data &amp; infra</dt><dd>Elasticsearch, MySQL, MinIO, Docker, on-prem GPU serving (NVIDIA DGX Spark), Epic FHIR API</dd></div>
+    </dl>
+  </section>
+
+  <section id="contact" class="section">
+    <h2>Contact</h2>
+    <p>The fastest way to reach me is email. I am currently looking for machine learning, AI engineering and research engineering roles.</p>
+    <ul class="contact-list">
+      <li><a href="mailto:eric.szh521@gmail.com">eric.szh521@gmail.com</a></li>
+      <li><a href="https://www.linkedin.com/in/zenghui-sun" target="_blank" rel="noopener">linkedin.com/in/zenghui-sun</a></li>
+      <li><a href="https://github.com/Eric-szh" target="_blank" rel="noopener">github.com/Eric-szh</a></li>
+    </ul>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <p>© 2026 Zenghui Sun</p>
+</footer>
+
+</body>
+</html>
