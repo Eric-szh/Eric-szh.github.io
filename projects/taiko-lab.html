@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A measurement and analysis system for rhythm-game play: raw input capture, song alignment, a statistical gate every conclusion must pass, and generated practice charts.">
+  <title>Rhythm-Game Performance Lab · Zenghui Sun</title>
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="../index.html">Zenghui Sun</a>
+  <nav class="nav">
+    <a href="../index.html#experience">Experience</a>
+    <a href="../index.html#research">Research</a>
+    <a href="../index.html#projects">Projects</a>
+    <a href="../index.html#writing">Writing</a>
+    <a href="../index.html#contact">Contact</a>
+  </nav>
+</header>
+
+<main class="article">
+  <p class="eyebrow">Personal project · Aug 2026 – present</p>
+  <h1>Rhythm-Game Performance Lab</h1>
+  <p class="meta">Python 3.13 · NumPy, pandas, SciPy, statsmodels, linearmodels, scikit-learn · ctypes (Win32 Raw Input) · pytest, uv</p>
+
+  <p class="lede">An end-to-end measurement and analysis system for my own rhythm-game play: hardware-level input capture, automatic song alignment, a statistical gate that every cross-song conclusion must pass, and targeted practice charts generated from the results. Most hypotheses I tested were refuted. The two that survived replicated on held-out data.</p>
+
+  <h2>1. Problem</h2>
+  <p>A PC taiko drum simulator scores a song and shows a summary. It does not give you per-note data: which hits were early, which were late, what happened right after a miss. If I wanted to know whether I was actually getting better, and at what, I had to collect the data myself, below the game.</p>
+
+  <h2>2. Pipeline</h2>
+  <div class="flow-wrap">
+  <svg class="flow" viewBox="0 0 720 120" role="img" aria-label="Pipeline: capture, identify and align, analyse under the gate, generate practice charts">
+    <defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="head" d="M0,0 L10,5 L0,10 z"/></marker></defs>
+    <rect class="box" x="8" y="24" width="150" height="72" rx="8"/>
+    <text class="lbl" x="83" y="54" text-anchor="middle">Capture</text>
+    <text class="sub" x="83" y="72" text-anchor="middle">Win32 Raw Input, ctypes</text>
+    <text class="sub" x="83" y="86" text-anchor="middle">make/break + perf counter</text>
+    <line class="arrow" x1="160" y1="60" x2="188" y2="60"/>
+    <rect class="box" x="190" y="24" width="150" height="72" rx="8"/>
+    <text class="lbl" x="265" y="54" text-anchor="middle">Identify + align</text>
+    <text class="sub" x="265" y="72" text-anchor="middle">coarse filter, then</text>
+    <text class="sub" x="265" y="86" text-anchor="middle">1 ms offset grid search</text>
+    <line class="arrow" x1="342" y1="60" x2="370" y2="60"/>
+    <rect class="box" x="372" y="24" width="150" height="72" rx="8"/>
+    <text class="lbl" x="447" y="54" text-anchor="middle">Analyse</text>
+    <text class="sub" x="447" y="72" text-anchor="middle">session-level inference</text>
+    <text class="sub" x="447" y="86" text-anchor="middle">gate() + pre-registration</text>
+    <line class="arrow" x1="524" y1="60" x2="552" y2="60"/>
+    <rect class="box" x="554" y="24" width="158" height="72" rx="8"/>
+    <text class="lbl" x="633" y="54" text-anchor="middle">Practice charts</text>
+    <text class="sub" x="633" y="72" text-anchor="middle">one difficulty factor</text>
+    <text class="sub" x="633" y="86" text-anchor="middle">at a time, 62–78% band</text>
+  </svg>
+  </div>
+  <ul>
+    <li><strong>Capture.</strong> A non-blocking Win32 Raw Input collector written in pure ctypes logs raw make/break events with a wall-clock and perf-counter anchor. Everything downstream, segmentation and note matching included, is a pure function of that log, so it can be recomputed offline whenever the analysis changes.</li>
+    <li><strong>Firmware, from timing data alone.</strong> The drum controller emits a fixed 18 ms key pulse and suppresses the opposite zone for 15 ms. That explained why about 62% of two-handed "big notes" emit only one key, and ruled out a metric I had planned to use.</li>
+    <li><strong>Identify and align.</strong> A coarse filter on hit count and duration narrows the candidate songs, then a 1 ms grid search over global offset picks the alignment that maximises hits inside the ±41.7 ms judgment window. I rejected dynamic time warping because it would absorb exactly the timing deviations I wanted to measure.</li>
+    <li><strong>Practice charts.</strong> A procedural generator isolates one difficulty factor at a time and targets a 62–78% hit-rate learning band.</li>
+  </ul>
+
+  <h2>3. Making conclusions hard to fake</h2>
+  <p>The first analyses treated every note as an independent sample. They were not. Notes within a session are correlated (ICC 0.103, design effect 23.4), so 5,890 notes were worth an effective sample of about 251. Every cross-song inference moved to session-level fixed effects with session-clustered standard errors.</p>
+  <p>Rules written in documents failed three times. So the rules became code. A <code>gate()</code> function returns one of three verdicts, holds, does not hold, or insufficient data. It refuses to run without a pre-registration card that names at least two competing explanations and fixed falsification criteria, and it stamps package versions into every result.</p>
+  <p>Review is done by a four-role agent workflow: coder, analyst, code QA, and a blind red team that sees the claim and the data but not the reasoning behind it. Given the reasoning, reviewers tend to agree with it. On day one the red team downgraded a finding by the gate's own author, which became a new "clean context" check in gate v2.</p>
+
+  <h2>4. What held and what did not</h2>
+  <p><strong>Held, and replicated.</strong> Two findings passed the gate and then replicated on 34 held-out sessions:</p>
+  <ul>
+    <li>Error clustering: an error raises the next note's error rate by 20.5 percentage points, in the same direction in 34 of 34 sessions. Held-out: 29 of 32 sessions, +22.0 pp, p = 3e−6.</li>
+    <li>Positive autocorrelation of timing deviation, 34 of 34 sessions in both the original and the held-out set.</li>
+  </ul>
+  <p><strong>Refuted.</strong></p>
+  <ul>
+    <li>A fatigue effect that looked strong at t = 4.03 fell to t = 0.20 once song identity was controlled. It was song-selection drift, not fatigue.</li>
+    <li>A planned two-handed "big note" metric, killed by the firmware's cross-zone suppression above.</li>
+    <li>Transfer from generated practice charts to a real song: a pre-registered transfer test did not show cross-day transfer, and it is reported as such.</li>
+  </ul>
+
+  <h2>5. Measuring progress</h2>
+  <p>To track long-term improvement I needed one metric and a protocol. Variance decomposition showed that median absolute timing error is about 4.5 times more precise than hit rate, so that is the metric. A power analysis set the protocol at one session per week for 8 to 12 weeks on a frozen, hash-locked benchmark chart. The trend on that chart is not yet claimed as improvement: "practised the benchmark" has not been ruled out.</p>
+  <p>The codebase has 298 automated tests, a pinned environment, and every file-modifying tool defaults to dry-run.</p>
+
+  <p class="back"><a href="../index.html#projects">← Back to projects</a></p>
+</main>
+
+<footer class="footer"><p>© 2026 Zenghui Sun</p></footer>
+</body>
+</html>

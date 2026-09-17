@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A build pipeline that turns a large compiled-HTML reference into a line-addressable, audited knowledge base an LLM agent queries locally.">
+  <title>Verified Knowledge Base · Zenghui Sun</title>
+  <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="../index.html">Zenghui Sun</a>
+  <nav class="nav">
+    <a href="../index.html#experience">Experience</a>
+    <a href="../index.html#research">Research</a>
+    <a href="../index.html#projects">Projects</a>
+    <a href="../index.html#writing">Writing</a>
+    <a href="../index.html#contact">Contact</a>
+  </nav>
+</header>
+
+<main class="article">
+  <p class="eyebrow">Personal project · Aug – Sep 2026</p>
+  <h1>Verified knowledge base for an LLM agent skill</h1>
+  <p class="meta">Python · HTML-to-Markdown parsing · TSV locator tables · Claude Skills</p>
+
+  <p class="lede">A build pipeline that turns a ~6,900-page CHM rules reference into a line-addressable, fully audited knowledge base that an LLM agent queries locally instead of searching the web. Anything the agent answers from outside the index is labelled as unverified.</p>
+
+  <h2>Source</h2>
+  <p>The reference is a tabletop RPG rulebook collection distributed as compiled HTML, about 6,900 pages across core and expansion sources. I use an assistant skill for that game myself, and I wanted its answers to come from the actual text, deterministically and offline, rather than from whatever a web search or the model's memory returned. The index is for personal use only and the source content is not redistributed.</p>
+
+  <h2>Parse</h2>
+  <ul>
+    <li>Parsed the CHM into structured Markdown indexes: about 1,240 spell entries and about 2,750 monster stat blocks, with no field truncation.</li>
+    <li>Consolidated per-type parsers into one shared monster parser and one shared HTML-to-Markdown converter, so a fix in one place applies to every source.</li>
+  </ul>
+
+  <h2>QA gate</h2>
+  <p>An independent QA script compares every index against the full source and blocks packaging unless all checks pass. A later page-level audit brought the four core rulebooks to 100% page coverage. The gate is separate from the parsers on purpose: a parser that checks its own output tends to agree with itself.</p>
+
+  <h2>Consolidate under platform limits</h2>
+  <p>The skill platform allows ASCII-only paths and at most 200 files. The build was refactored to meet that: about 70 files plus a line-number locator table and a lookup script, produced by a fixed pipeline of build, QA, ASCII-fy, consolidate, package.</p>
+
+  <h2>Agent lookup</h2>
+  <p>The agent resolves a question to a file and line range through the locator table and reads the text there. If the answer is not in the index, it says so, marks the reply "from memory, verify," and states the condition that would overturn it.</p>
+
+  <h2>Why it matters beyond the hobby</h2>
+  <p>This is the same set of problems as production retrieval at smaller scale: ingestion from an awkward source format, validation against the source, chunk addressing, and deciding what the model may say when retrieval comes back empty. Doing it end to end on something I use every week is how I learned where those pipelines actually fail.</p>
+
+  <p class="back"><a href="../index.html#projects">← Back to projects</a></p>
+</main>
+
+<footer class="footer"><p>© 2026 Zenghui Sun</p></footer>
+</body>
+</html>

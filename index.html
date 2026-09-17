@@ -69,6 +69,7 @@
         <li>Designed the routing and quoting layer as a Python FastAPI service with a swappable retrieval engine, specified a multimodal ingestion pipeline (OCR and table-structure parsing, Whisper ASR for video, CAD title-block and BOM extraction), and benchmarked on-prem serving on an NVIDIA DGX Spark (GB10, ARM, 128 GB) against hosted APIs.</li>
         <li>Deployed RAGFlow on the DGX Spark from an arm64 image I built myself after the vendor shipped x86 only, then measured it end to end: roughly 92 tokens/s generation on a 30B mixture-of-experts model, first token under 0.2 s warm, retrieval alone 0.4 s.</li>
       </ul>
+      <p class="entry-link"><a href="writing/ragflow-silent-failures.html">Write-up: Two silent failures on a DGX Spark →</a></p>
     </article>
 
     <article class="entry">
@@ -83,6 +84,7 @@
         <li>Deployed the bagged logistic-regression model into CHOA's production clinical workflow via the Epic EHR API, chosen over the higher-performing transformer for interpretability and lower deployment complexity (AUROC 0.911, recall 0.742 at a 0.617% event rate, 3.5M-row test set).</li>
         <li>Defined the model API contract and payload specification for Epic FHIR integration within a cross-institutional team of about 19 people, and presented feature-importance and time-window analyses to clinical staff, iterating 2-hour and 12-hour prediction windows on physician feedback.</li>
       </ul>
+      <p class="entry-link"><a href="projects/choa.html">Case study →</a></p>
     </article>
 
     <article class="entry">
@@ -99,7 +101,7 @@
     <article class="entry">
       <div class="entry-head">
         <h3>Northeastern University <span class="role">Teaching Assistant, CS 2510</span></h3>
-        <p class="meta">Boston, MA</p>
+        <p class="meta">Boston, MA · 2022</p>
       </div>
       <ul>
         <li>Fundamentals of Computer Science 2: object-oriented programming and data structures in Java.</li>
@@ -125,7 +127,7 @@
       <li>
         <span class="pub-title">Early Prediction of Pediatric ICU Transfer: A Comparative Study of Tabular and Time Series Machine Learning Models</span><br>
         <span class="meta">Manuscript in preparation, to be submitted to the INFORMS Journal on Data Science.</span>
-        <p>Compares tabular models (PEWS, logistic regression, decision tree, neural network) with time-series models (DLinear, Bi-LSTM, MIST) on a CHOA PICU cohort. I own the logistic-regression and tabular baseline pipeline.</p>
+        <p>Tabular versus time-series models for pediatric ICU transfer prediction. My part is the logistic-regression and tabular baseline pipeline; the results are on the <a href="projects/choa.html">CHOA case study</a>.</p>
       </li>
     </ol>
   </section>
@@ -134,28 +136,38 @@
     <h2>Projects</h2>
     <div class="cards">
       <article class="card">
-        <h3><a href="projects/choa.html">Pediatric ICU Early Warning at CHOA</a></h3>
-        <p class="meta">Georgia Tech × Children's Healthcare of Atlanta · 2025–2026</p>
-        <p>A 9-stage EHR preprocessing pipeline (WDL-tree semantic imputation, LLM severity scoring), a model benchmark against the clinical standard PEWS (AUROC 0.819 to 0.911), and a bagged logistic regression deployed into the hospital's Epic workflow.</p>
-        <p class="tags">clinical ML · EHR · time series · deployment</p>
+        <h3><a href="projects/taiko-lab.html">Rhythm-Game Performance Lab</a></h3>
+        <p class="meta">Personal project · 2026</p>
+        <p>An end-to-end measurement and analysis system for my own rhythm-game play: hardware-level input capture, automatic song alignment, a statistical gate that every cross-song conclusion must pass, and targeted practice charts generated from the results.</p>
+        <p class="tags">measurement · causal inference · stats engineering · agents</p>
+        <p class="links"><a href="projects/taiko-lab.html">Case study →</a></p>
       </article>
       <article class="card">
         <h3><a href="projects/rmab.html">ICU Patient Allocation via Restless Multi-Armed Bandits</a></h3>
-        <p class="meta">eICU · 2025 · <a href="https://github.com/Eric-szh/RMAB-MIMIC" target="_blank" rel="noopener">github.com/Eric-szh/RMAB-MIMIC</a></p>
-        <p>Formulated ICU bed allocation as a finite-horizon RMAB over an 82-state MDP, estimated transition matrices from 17,885 eICU patient-day transitions, and derived a Q-function heuristic policy with value iteration. Over a 90-day horizon (N=300, 20 seeds) the policy reduced simulated deaths by about 39 versus a sickest-first baseline. An ethnicity-augmented variant showed how a policy learned from observational data reproduces the disparities already in it.</p>
-        <p class="tags">RL · MDP · value iteration · fairness · healthcare</p>
+        <p class="meta">Course project · 2025</p>
+        <p>ICU bed allocation as a finite-horizon RMAB over an 82-state MDP learned from eICU data. A Q-function heuristic policy reduced simulated deaths by about 39 versus sickest-first over 90 days, and an ethnicity-augmented variant showed how a policy learned from observational data reproduces the disparities already in it.</p>
+        <p class="tags">RL · MDP · fairness · healthcare</p>
+        <p class="links"><a href="projects/rmab.html">Case study →</a> <a href="https://github.com/Eric-szh/RMAB-MIMIC" target="_blank" rel="noopener">Code →</a></p>
+      </article>
+      <article class="card">
+        <h3><a href="projects/knowledge-base.html">Verified Knowledge Base for an LLM Agent Skill</a></h3>
+        <p class="meta">Personal project · 2026</p>
+        <p>A build pipeline that turns a ~6,900-page CHM rules reference into a line-addressable, fully audited knowledge base that an LLM agent queries locally instead of searching the web.</p>
+        <p class="tags">data ingestion · knowledge base · QA automation · LLM agents</p>
+        <p class="links"><a href="projects/knowledge-base.html">Case study →</a></p>
       </article>
       <article class="card">
         <h3><a href="projects/nutrition5k.html">RGB–LiDAR Fusion for Food Macro-Nutrient Estimation</a></h3>
-        <p class="meta">Nutrition5k · 2026</p>
-        <p>Dual-stream PyTorch model: a pretrained ResNet18 for RGB and a purpose-built 4-layer CNN for depth, fused into a regression head. Cut calorie MAE 17.6% (57.70 to 47.52 kcal) over an RGB-only baseline. Ablations showed the lightweight depth encoder beats a full ResNet18 depth branch, and that Food-101 pre-training hurts portion regression.</p>
+        <p class="meta">Course project · 2026</p>
+        <p>A dual-stream PyTorch model (pretrained ResNet18 for RGB, purpose-built 4-layer CNN for depth) that cut calorie MAE 17.6% over an RGB-only baseline on Nutrition5k. Ablations showed the lightweight depth encoder beats a full ResNet18 depth branch, and that Food-101 pre-training hurts.</p>
         <p class="tags">computer vision · multimodal · CNN · PyTorch</p>
+        <p class="links"><a href="projects/nutrition5k.html">Case study →</a></p>
       </article>
-      <article class="card">
-        <h3>Agentic Workflow Harness</h3>
-        <p class="meta">Self-built · 2026</p>
-        <p>A layered harness that makes an LLM agent execute a repeatable workflow: a policy layer for hard constraints, persistent memory separated from procedure, a single content source of truth, trigger-invoked skills, and a correction loop that routes every caught error back to the layer that should have prevented it. Irreversible actions sit behind human confirmation and programmatic verification gates.</p>
-        <p class="tags">agent engineering · LLM tooling · evals · automation</p>
+      <article class="card compact">
+        <h3>Video Digest: Keyframes with Aligned Transcripts</h3>
+        <p class="meta">Personal project · 2026</p>
+        <p>A tool that turns a video link or file into keyframes plus a time-aligned transcript, so an LLM can read what is shown on screen, not only what is said. Picks the ASR backend automatically from cached weights; on CPU a 10-minute video digests in about 1.5 minutes with SenseVoice versus about 6 with Whisper medium.</p>
+        <p class="tags">ASR · video · multimodal · tooling</p>
       </article>
     </div>
   </section>
@@ -171,6 +183,7 @@
         <a href="writing/ragflow-silent-failures.html">Two silent failures on a DGX Spark</a>
         <p>Zeroed embeddings from a dropped setting, and a table parser that quietly switched on Text2SQL during a live demo. What each one taught me about deploying RAG on-prem.</p>
       </li>
+      <!-- reserved: a Writing entry for the Rhythm-Game Performance Lab (projects/taiko-lab.html) -->
     </ul>
   </section>
 
@@ -178,8 +191,9 @@
     <h2>Skills</h2>
     <dl class="skills">
       <div><dt>Languages</dt><dd>Python, Java, JavaScript / Node.js, SQL</dd></div>
-      <div><dt>ML / AI</dt><dd>PyTorch, scikit-learn, LLM fine-tuning, reward modeling, RLHF, LSTM, CNN, RAG, hybrid retrieval (vector + BM25), reranking, embeddings</dd></div>
-      <div><dt>Software</dt><dd>Data structures and algorithms, object-oriented design, distributed systems, REST APIs, FastAPI, Express, Git, Jupyter</dd></div>
+      <div><dt>ML / AI</dt><dd>PyTorch, scikit-learn, LLM fine-tuning, reward modeling, RLHF, LSTM, CNN, RAG, hybrid retrieval (vector + BM25), reranking, embeddings, ASR (Whisper, SenseVoice), OCR and table-structure parsing</dd></div>
+      <div><dt>Software</dt><dd>Data structures and algorithms, object-oriented design, REST APIs, FastAPI, Express, pytest, Git, Jupyter</dd></div>
+      <div><dt>Agents &amp; tooling</dt><dd>Claude Code, MCP, agent skills, evaluation gates</dd></div>
       <div><dt>Data &amp; infra</dt><dd>Elasticsearch, MySQL, MinIO, Docker, on-prem GPU serving (NVIDIA DGX Spark), Epic FHIR API</dd></div>
     </dl>
   </section>

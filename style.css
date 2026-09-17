@@ -221,3 +221,18 @@ dd { margin: 2px 0 0; }
 .article th { color: var(--muted); font-weight: 600; font-size: 14px; text-transform: uppercase; letter-spacing: 0.04em; }
 .article code { font-family: ui-monospace, Consolas, "SF Mono", Menlo, monospace; font-size: 0.9em; background: var(--accent-soft); padding: 1px 5px; border-radius: 4px; }
 .article .back { margin-top: 40px; }
+
+/* Card link rows and entry links */
+.card .links { margin-top: 10px; }
+.card .links a { font-weight: 600; margin-right: 14px; }
+.entry-link { margin: 8px 0 0; font-size: 15px; }
+.entry-link a { font-weight: 600; }
+
+/* Inline SVG flow diagram */
+.flow-wrap { overflow-x: auto; margin: 12px 0 20px; -webkit-overflow-scrolling: touch; }
+.flow { width: 100%; min-width: 640px; height: auto; display: block; }
+.flow .box { fill: var(--accent-soft); stroke: var(--accent); stroke-width: 1.5; }
+.flow .lbl { fill: var(--text); font-family: inherit; font-size: 13px; }
+.flow .sub { fill: var(--muted); font-family: inherit; font-size: 11px; }
+.flow .arrow { stroke: var(--muted); stroke-width: 1.5; fill: none; marker-end: url(#ah); }
+.flow .head { fill: var(--muted); }
